@@ -56,6 +56,19 @@ public class RuleTasksDelegator {
         return predictedValue;
     }
 
+
+    public double getNumberOfInstancesRequired(float rifPredictedValue , float requestsServedPerInstance , float averageRequestsServedPerInstance , boolean arspiReset){
+
+        float requestsInstanceCanHandle = requestsServedPerInstance;
+
+        if(arspiReset){
+            requestsInstanceCanHandle = averageRequestsServedPerInstance;
+        }
+        float numberOfInstances;
+        numberOfInstances = rifPredictedValue / requestsInstanceCanHandle;
+        return Math.ceil(numberOfInstances);
+    }
+
     public AutoscaleAlgorithm getAutoscaleAlgorithm(String partitionAlgorithm){
         AutoscaleAlgorithm autoscaleAlgorithm = null;
         if(log.isDebugEnabled()){

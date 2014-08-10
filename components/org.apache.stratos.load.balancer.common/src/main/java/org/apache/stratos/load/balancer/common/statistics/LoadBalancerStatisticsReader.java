@@ -29,4 +29,7 @@ public interface LoadBalancerStatisticsReader {
      * @param clusterId
      */
     int getInFlightRequestCount(String clusterId);
+    int getServedRequestCount(String clusterId);
+    int getActiveInstancesCount(String clusterId);
+
 }

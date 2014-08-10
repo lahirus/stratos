@@ -172,6 +172,10 @@ public class AutoscalerHealthStatEventReceiver implements Runnable {
                 String clusterId = e.getClusterId();
                 String networkPartitionId = e.getNetworkPartitionId();
                 Float floatValue = e.getValue();
+                Float servedCount = e.getServedCount();
+                Float activeInstances = e.getActiveInstances();
+                Float requestsServedPerInstance = servedCount/activeInstances;
+
 
 
                 if (log.isDebugEnabled()) {
@@ -194,11 +198,55 @@ public class AutoscalerHealthStatEventReceiver implements Runnable {
                 if(null != monitor){
                     NetworkPartitionContext networkPartitionContext = monitor.getNetworkPartitionCtxt(networkPartitionId);
                     if(null != networkPartitionContext){
-                        networkPartitionContext.setAverageRequestsInFlight(floatValue);
+                        networkPartitionContext.setAverageRequestsInFlight(floatValue, requestsServedPerInstance);
+
                     } else {
                         if(log.isDebugEnabled()) {
                            log.debug(String.format("Network partition context is not available for :" +
                                    " [network partition] %s", networkPartitionId));
+                        }
+                    }
+                }
+            }
+
+        });
+        healthStatEventReceiver.addEventListener(new AverageServedRequestsEventListener() {
+            @Override
+            protected void onEvent(org.apache.stratos.messaging.event.Event event) {
+
+                AverageRequestsInFlightEvent e = (AverageRequestsInFlightEvent) event;
+                String clusterId = e.getClusterId();
+                String networkPartitionId = e.getNetworkPartitionId();
+                Float floatValue = e.getValue();
+
+
+
+                if (log.isDebugEnabled()) {
+                    log.debug(String.format("Average Rif event: [cluster] %s [network-partition] %s [value] %s",
+                            clusterId, networkPartitionId, floatValue));
+                }
+                AutoscalerContext asCtx = AutoscalerContext.getInstance();
+                AbstractMonitor monitor;
+
+                if(asCtx.monitorExist(clusterId)){
+                    monitor = asCtx.getMonitor(clusterId);
+                }else if(asCtx.lbMonitorExist(clusterId)){
+                    monitor = asCtx.getLBMonitor(clusterId);
+                }else{
+                    if(log.isDebugEnabled()){
+                        log.debug(String.format("A cluster monitor is not found in autoscaler context [cluster] %s", clusterId));
+                    }
+                    return;
+                }
+                if(null != monitor){
+                    NetworkPartitionContext networkPartitionContext = monitor.getNetworkPartitionCtxt(networkPartitionId);
+                    if(null != networkPartitionContext){
+                        networkPartitionContext.setAverageRequestsServedPerInstance(floatValue);
+
+                    } else {
+                        if(log.isDebugEnabled()) {
+                            log.debug(String.format("Network partition context is not available for :" +
+                                    " [network partition] %s", networkPartitionId));
                         }
                     }
                 }

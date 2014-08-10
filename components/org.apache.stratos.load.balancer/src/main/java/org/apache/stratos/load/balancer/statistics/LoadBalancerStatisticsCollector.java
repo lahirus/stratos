@@ -35,6 +35,7 @@ public class LoadBalancerStatisticsCollector implements LoadBalancerStatisticsRe
     private static volatile LoadBalancerStatisticsCollector instance;
     // Map<ClusterId, Integer>
     private Map<String, Integer> clusterIdRequestCountMap;
+    private Map<String, Integer> clusterIdServedRequestCountMap;
 
     private LoadBalancerStatisticsCollector() {
         clusterIdRequestCountMap = new ConcurrentHashMap<String, Integer>();
@@ -69,6 +70,27 @@ public class LoadBalancerStatisticsCollector implements LoadBalancerStatisticsRe
                 Integer count = clusterIdRequestCountMap.get(clusterId);
                 if(count != null) {
                     return count;
+                }
+            }
+            return 0;
+        }
+    }
+
+    public int getActiveInstancesCount(String clusterId){
+        //to do
+        return 0;
+    }
+
+    /**
+     * Returns the number of requests served since the last time this function was called.
+     */
+    public int getServedRequestCount(String clusterId){
+        synchronized (LoadBalancerStatisticsCollector.class) {
+            if (clusterIdServedRequestCountMap.containsKey(clusterId)) {
+                Integer servedCount = clusterIdRequestCountMap.get(clusterId);
+                if(servedCount != null) {
+                    clusterIdServedRequestCountMap.put(clusterId, 0);
+                    return servedCount;
                 }
             }
             return 0;
@@ -118,6 +140,13 @@ public class LoadBalancerStatisticsCollector implements LoadBalancerStatisticsRe
                 }
                 clusterIdRequestCountMap.put(clusterId, count);
 
+                Integer servedCount = 0;
+                if (clusterIdServedRequestCountMap.containsKey(clusterId)) {
+                    servedCount = clusterIdServedRequestCountMap.get(clusterId);
+                }
+                servedCount++;
+                clusterIdServedRequestCountMap.put(clusterId, servedCount);
+
                 if (log.isDebugEnabled()) {
                     log.debug(String.format("In-flight request count decremented: [cluster] %s [count] %s ", clusterId,
                             count));
@@ -125,4 +154,6 @@ public class LoadBalancerStatisticsCollector implements LoadBalancerStatisticsRe
             }
         }
     }
+
+
 }

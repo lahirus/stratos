@@ -75,6 +75,7 @@ public class NetworkPartitionContext implements Serializable{
 
     //partitions of this network partition
     private final Map<String, PartitionContext> partitionCtxts;
+    private boolean averageRequestServedPerInstanceReset= false;
 
     public NetworkPartitionContext(String id, String partitionAlgo, Partition[] partitions) {
 
@@ -237,12 +238,29 @@ public class NetworkPartitionContext implements Serializable{
         this.currentPartitionIndex = currentPartitionIndex;
     }
 
+    public float getAverageRequestsServedPerInstance() { return requestsInFlight.getAverageRequestsServedPerInstance();}
+
+    public void setAverageRequestsServedPerInstance(float averageRequestServedPerInstanc) {
+        requestsInFlight.setAverageRequestsServedPerInstance(averageRequestServedPerInstanc);
+        averageRequestServedPerInstanceReset = true;
+
+            if(log.isDebugEnabled()){
+                log.debug(String.format("Average Requesets Served Per Instance stats are reset, ready to do scale check [network partition] %s"
+                        , this.id));
+
+        }
+    }
+
+
+    public float getRequestsServedPerInstance() { return requestsInFlight.getRequestsServedPerInstance();}
+
     public float getAverageRequestsInFlight() {
         return requestsInFlight.getAverage();
     }
 
-    public void setAverageRequestsInFlight(float averageRequestsInFlight) {
+    public void setAverageRequestsInFlight(float averageRequestsInFlight, float requestsServedPerInstance) {
         requestsInFlight.setAverage(averageRequestsInFlight);
+        requestsInFlight.setRequestsServedPerInstance(requestsServedPerInstance);
         averageRifReset = true;
         if(secondDerivativeRifRest && gradientRifReset){
             rifReset = true;
@@ -252,6 +270,10 @@ public class NetworkPartitionContext implements Serializable{
             }
         }
     }
+
+
+
+
 
     public float getRequestsInFlightSecondDerivative() {
         return requestsInFlight.getSecondDerivative();
@@ -283,6 +305,13 @@ public class NetworkPartitionContext implements Serializable{
                         , this.id));
             }
         }
+    }
+
+    public boolean isAverageRequestServedPerInstanceReset() {return averageRequestServedPerInstanceReset;}
+
+    public void setAverageRequestServedPerInstanceReset(boolean averageRequestServedPerInstanceReset) {
+        this.averageRequestServedPerInstanceReset = averageRequestServedPerInstanceReset;
+
     }
 
     public boolean isRifReset() {
