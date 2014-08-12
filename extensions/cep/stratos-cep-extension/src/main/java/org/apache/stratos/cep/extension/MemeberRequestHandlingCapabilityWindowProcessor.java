@@ -28,7 +28,7 @@ public class MemeberRequestHandlingCapabilityWindowProcessor extends FunctionExe
                 value[i]= Double.parseDouble(String.valueOf(aObj));
                 i++;
             }
-        }
+        }//to do avoid deviding zero
         return value[0]/value[1];
     }
 

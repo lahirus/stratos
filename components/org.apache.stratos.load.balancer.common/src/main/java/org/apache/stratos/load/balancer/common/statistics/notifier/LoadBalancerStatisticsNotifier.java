@@ -74,16 +74,14 @@ public class LoadBalancerStatisticsNotifier implements Runnable {
                     try {
                         TopologyManager.acquireReadLock();
                         int requestCount;
-                        int servedRequestCount = 0;
+                        int servedRequestCount;
                         int activeInstancesCount;
                         for (Service service : TopologyManager.getTopology().getServices()) {
                             for (Cluster cluster : service.getClusters()) {
                                 if (!cluster.isLbCluster()) {
                                     // Publish in-flight request count of load balancer's network partition
                                     requestCount = statsReader.getInFlightRequestCount(cluster.getClusterId());
-                                    if(requestCount >0) {
-                                        servedRequestCount = statsReader.getServedRequestCount(cluster.getClusterId());
-                                    }
+                                    servedRequestCount = statsReader.getServedRequestCount(cluster.getClusterId());
                                     activeInstancesCount = statsReader.getActiveInstancesCount(cluster);
                                     inFlightRequestPublisher.publish(cluster.getClusterId(), networkPartitionId,activeInstancesCount, requestCount, servedRequestCount);
                                     if (log.isDebugEnabled()) {

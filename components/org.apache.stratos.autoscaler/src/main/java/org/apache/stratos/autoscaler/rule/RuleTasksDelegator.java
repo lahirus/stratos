@@ -24,6 +24,7 @@ package org.apache.stratos.autoscaler.rule;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.stratos.autoscaler.Constants;
+import org.apache.stratos.autoscaler.NetworkPartitionContext;
 import org.apache.stratos.autoscaler.NetworkPartitionLbHolder;
 import org.apache.stratos.autoscaler.PartitionContext;
 import org.apache.stratos.autoscaler.algorithm.AutoscaleAlgorithm;
@@ -32,7 +33,11 @@ import org.apache.stratos.autoscaler.algorithm.RoundRobin;
 import org.apache.stratos.autoscaler.client.cloud.controller.CloudControllerClient;
 import org.apache.stratos.autoscaler.client.cloud.controller.InstanceNotificationClient;
 import org.apache.stratos.autoscaler.partition.PartitionManager;
+import org.apache.stratos.cloud.controller.stub.deployment.partition.Partition;
 import org.apache.stratos.cloud.controller.stub.pojo.MemberContext;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This will have utility methods that need to be executed from rule file...
@@ -57,16 +62,33 @@ public class RuleTasksDelegator {
     }
 
 
-    public double getNumberOfInstancesRequired(float rifPredictedValue , float requestsServedPerInstance , float averageRequestsServedPerInstance , boolean arspiReset){
+    public int getNumberOfInstancesRequired(float rifPredictedValue , float requestsServedPerInstance , float averageRequestsServedPerInstance , boolean arspiReset){
 
         float requestsInstanceCanHandle = requestsServedPerInstance;
 
         if(arspiReset){
             requestsInstanceCanHandle = averageRequestsServedPerInstance;
         }
-        float numberOfInstances;
-        numberOfInstances = rifPredictedValue / requestsInstanceCanHandle;
-        return Math.ceil(numberOfInstances);
+
+        float numberOfInstances =0;
+        if(requestsInstanceCanHandle!=0) {
+            numberOfInstances = rifPredictedValue / requestsInstanceCanHandle;
+        }else{
+            // no requests.assumed process time less than minute
+
+        }
+        return (int)Math.ceil(numberOfInstances);
+    }
+
+    public int getActiveMembersCount(NetworkPartitionContext networkPartitionContext){
+
+        List<?> partitions = Arrays.asList(networkPartitionContext.getPartitions());
+        int currentPartitionIndex = networkPartitionContext.getCurrentPartitionIndex();
+        Partition currentPartition = (Partition) partitions.get(currentPartitionIndex);
+        String currentPartitionId = currentPartition.getId();
+        int currentlyActiveMemberCount = networkPartitionContext.getActiveMemberCount(currentPartitionId);
+
+        return currentlyActiveMemberCount;
     }
 
     public AutoscaleAlgorithm getAutoscaleAlgorithm(String partitionAlgorithm){
