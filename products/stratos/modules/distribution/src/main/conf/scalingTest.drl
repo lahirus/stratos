@@ -79,8 +79,6 @@ dialect "mvel"
 	    requestsServedPerInstance : Float() from  $networkPartitionContext.getRequestsServedPerInstance()
 	    averageRequestsServedPerInstance : Float() from  $networkPartitionContext.getAverageRequestsServedPerInstance()
 
-	    activeInstances :
-
         mcUpperLimit : Float() from  $loadThresholds.getMemoryConsumption().getUpperLimit()
         mcLowerLimit : Float() from  $loadThresholds.getMemoryConsumption().getLowerLimit()
 

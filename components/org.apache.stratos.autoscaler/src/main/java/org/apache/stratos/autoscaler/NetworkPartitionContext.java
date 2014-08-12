@@ -59,6 +59,8 @@ public class NetworkPartitionContext implements Serializable{
     private boolean loadAverageReset = false, averageLoadAverageReset = false, gradientLoadAverageReset = false,
             secondDerivativeLoadAverageRest = false;
 
+    //boolean values to keep whether average requests served per instance parameters are reset or not
+    private boolean averageRequestServedPerInstanceReset= false;
     //FIXME this should be populated via PartitionGroups a.k.a. NetworkPartitions
     private int minInstanceCount = 1, maxInstanceCount = 1;
 
@@ -75,7 +77,6 @@ public class NetworkPartitionContext implements Serializable{
 
     //partitions of this network partition
     private final Map<String, PartitionContext> partitionCtxts;
-    private boolean averageRequestServedPerInstanceReset= false;
 
     public NetworkPartitionContext(String id, String partitionAlgo, Partition[] partitions) {
 

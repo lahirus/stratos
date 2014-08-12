@@ -84,7 +84,7 @@ public class LoadBalancerStatisticsNotifier implements Runnable {
                                     if(requestCount >0) {
                                         servedRequestCount = statsReader.getServedRequestCount(cluster.getClusterId());
                                     }
-                                    activeInstancesCount = statsReader.getActiveInstancesCount(cluster.getClusterId());
+                                    activeInstancesCount = statsReader.getActiveInstancesCount(cluster);
                                     inFlightRequestPublisher.publish(cluster.getClusterId(), networkPartitionId,activeInstancesCount, requestCount, servedRequestCount);
                                     if (log.isDebugEnabled()) {
                                         log.debug(String.format("In-flight request count published to cep: [cluster-id] %s [network-partition] %s [value] %d",
@@ -110,6 +110,8 @@ public class LoadBalancerStatisticsNotifier implements Runnable {
             }
         }
     }
+
+
 
     /**
      * Terminate load balancer statistics notifier thread.

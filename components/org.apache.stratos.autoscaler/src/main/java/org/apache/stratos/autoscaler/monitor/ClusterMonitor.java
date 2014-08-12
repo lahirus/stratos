@@ -126,7 +126,7 @@ public class ClusterMonitor extends AbstractMonitor{
                 networkPartitionContext.setRifReset(false);
                 networkPartitionContext.setMemoryConsumptionReset(false);
                 networkPartitionContext.setLoadAverageReset(false);
-                networkPartitionContext.setAverageRequestServedPerInstanceReset(false);
+            //    networkPartitionContext.setAverageRequestServedPerInstanceReset(false);
             } else if(log.isDebugEnabled()){
                     log.debug(String.format("Scale rule will not run since the LB statistics have not received before this " +
                             "cycle for network partition %s", networkPartitionContext.getId()) );

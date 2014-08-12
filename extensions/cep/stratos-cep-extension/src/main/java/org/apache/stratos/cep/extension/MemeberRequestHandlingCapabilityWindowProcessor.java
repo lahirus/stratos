@@ -12,7 +12,7 @@ import org.wso2.siddhi.query.api.extension.annotation.SiddhiExtension;
 @SiddhiExtension(namespace = "stratos", function = "divider")
 public class MemeberRequestHandlingCapabilityWindowProcessor extends FunctionExecutor {
 
-    Attribute.Type returnType;
+    Attribute.Type returnType = Attribute.Type.DOUBLE;
 
     @Override
     public void init(Attribute.Type[] types, SiddhiContext siddhiContext) {
@@ -39,6 +39,6 @@ public class MemeberRequestHandlingCapabilityWindowProcessor extends FunctionExe
 
     @Override
     public Attribute.Type getReturnType() {
-        return null;
+        return returnType;
     }
 }

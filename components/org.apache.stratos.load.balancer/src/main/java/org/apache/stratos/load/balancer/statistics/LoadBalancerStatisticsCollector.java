@@ -22,6 +22,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.stratos.load.balancer.common.statistics.LoadBalancerStatisticsReader;
+import org.apache.stratos.messaging.domain.topology.Cluster;
+import org.apache.stratos.messaging.domain.topology.Member;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -76,10 +78,8 @@ public class LoadBalancerStatisticsCollector implements LoadBalancerStatisticsRe
         }
     }
 
-    public int getActiveInstancesCount(String clusterId){
-        //to do
-        return 0;
-    }
+
+
 
     /**
      * Returns the number of requests served since the last time this function was called.
@@ -95,6 +95,18 @@ public class LoadBalancerStatisticsCollector implements LoadBalancerStatisticsRe
             }
             return 0;
         }
+    }
+
+    @Override
+    public int getActiveInstancesCount(Cluster cluster) {
+        int activeInstances = 0;
+        for( Member member :cluster.getMembers()){
+            if(member.isActive()){
+                activeInstances++;
+            }
+
+        }return activeInstances;
+
     }
 
     void incrementInFlightRequestCount(String clusterId) {

@@ -19,6 +19,8 @@
 
 package org.apache.stratos.load.balancer.common.statistics;
 
+import org.apache.stratos.messaging.domain.topology.Cluster;
+
 /**
  * Load balancer statistics reader interface.
  */
@@ -30,6 +32,6 @@ public interface LoadBalancerStatisticsReader {
      */
     int getInFlightRequestCount(String clusterId);
     int getServedRequestCount(String clusterId);
-    int getActiveInstancesCount(String clusterId);
+    int getActiveInstancesCount(Cluster cluster);
 
 }

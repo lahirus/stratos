@@ -222,7 +222,7 @@ public class AutoscalerHealthStatEventReceiver implements Runnable {
 
 
                 if (log.isDebugEnabled()) {
-                    log.debug(String.format("Average Rif event: [cluster] %s [network-partition] %s [value] %s",
+                    log.debug(String.format("Average Requests Served per Instance event: [cluster] %s [network-partition] %s [value] %s",
                             clusterId, networkPartitionId, floatValue));
                 }
                 AutoscalerContext asCtx = AutoscalerContext.getInstance();
