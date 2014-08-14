@@ -121,6 +121,7 @@ dialect "mvel"
 
 	then
         if(scaleUp){
+            log.info("[scale-up] ACTIVE INSTANCE!!!!!!!!!!! "+ numberOfInstancesReuquired);
             int additionalInstances = numberOfInstancesReuquired - activeInstances ;
             for(int i=0; i< additionalInstances ; i++){
             $networkPartitionContext.resetScaleDownRequestsCount();
@@ -133,6 +134,7 @@ dialect "mvel"
             }
         } else if(scaleDown){
             int extraInstances = activeInstances - numberOfInstancesReuquired;
+                      log.info("[scale-DOWN] REQUIRED!!!!!!!!!!! "+ numberOfInstancesReuquired);
             log.debug("[scale-down] Decided to Scale down [cluster] " + clusterId);
             if($networkPartitionContext.getScaleDownRequestsCount() > 5 ){
                 for(int i=0; i< extraInstances ; i++){
@@ -188,11 +190,13 @@ dialect "mvel"
                 }
                 }
             } else{
+                 log.info("[scale-down] Not reached scale down requests threshold. "+ numberOfInstancesReuquired);
                  log.debug("[scale-down] Not reached scale down requests threshold. " + clusterId + " Count " + $networkPartitionContext.getScaleDownRequestsCount());
                  $networkPartitionContext.increaseScaleDownRequestsCount();
 
              }
         }  else{
+            log.info("[scaling] No decision made to eithe "+ numberOfInstancesReuquired);
             log.debug("[scaling] No decision made to either scale up or scale down ... ");
 
         }
