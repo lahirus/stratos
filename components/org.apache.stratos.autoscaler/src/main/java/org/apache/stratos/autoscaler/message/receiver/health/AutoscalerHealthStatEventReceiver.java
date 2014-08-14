@@ -210,7 +210,7 @@ public class AutoscalerHealthStatEventReceiver implements Runnable {
             }
 
         });
-        healthStatEventReceiver.addEventListener(new AverageServedRequestsEventListener() {
+        healthStatEventReceiver.addEventListener(new AverageRequestsServingCapabilityEventListener() {
             @Override
             protected void onEvent(org.apache.stratos.messaging.event.Event event) {
 
