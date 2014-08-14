@@ -24,7 +24,6 @@ package org.apache.stratos.autoscaler.rule;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.stratos.autoscaler.Constants;
-import org.apache.stratos.autoscaler.NetworkPartitionContext;
 import org.apache.stratos.autoscaler.NetworkPartitionLbHolder;
 import org.apache.stratos.autoscaler.PartitionContext;
 import org.apache.stratos.autoscaler.algorithm.AutoscaleAlgorithm;
@@ -33,11 +32,11 @@ import org.apache.stratos.autoscaler.algorithm.RoundRobin;
 import org.apache.stratos.autoscaler.client.cloud.controller.CloudControllerClient;
 import org.apache.stratos.autoscaler.client.cloud.controller.InstanceNotificationClient;
 import org.apache.stratos.autoscaler.partition.PartitionManager;
-import org.apache.stratos.cloud.controller.stub.deployment.partition.Partition;
 import org.apache.stratos.cloud.controller.stub.pojo.MemberContext;
-
-import java.util.Arrays;
-import java.util.List;
+import org.apache.stratos.messaging.domain.topology.Cluster;
+import org.apache.stratos.messaging.domain.topology.Member;
+import org.apache.stratos.messaging.domain.topology.Service;
+import org.apache.stratos.messaging.message.receiver.topology.TopologyManager;
 
 /**
  * This will have utility methods that need to be executed from rule file...
@@ -80,15 +79,17 @@ public class RuleTasksDelegator {
         return (int)Math.ceil(numberOfInstances);
     }
 
-    public int getActiveMembersCount(NetworkPartitionContext networkPartitionContext){
+    public int getActiveMembersCount(String clusterId){
 
-        List<?> partitions = Arrays.asList(networkPartitionContext.getPartitions());
-        int currentPartitionIndex = networkPartitionContext.getCurrentPartitionIndex();
-        Partition currentPartition = (Partition) partitions.get(currentPartitionIndex);
-        String currentPartitionId = currentPartition.getId();
-        int currentlyActiveMemberCount = networkPartitionContext.getActiveMemberCount(currentPartitionId);
-
-        return currentlyActiveMemberCount;
+        Service service = (Service) TopologyManager.getTopology().getServices();
+        Cluster cluster = service.getCluster(clusterId);
+        int activeInstances = 0;
+        for( Member member :cluster.getMembers()) {
+            if (member.isActive()) {
+                activeInstances++;
+            }
+        }
+        return activeInstances;
     }
 
     public AutoscaleAlgorithm getAutoscaleAlgorithm(String partitionAlgorithm){

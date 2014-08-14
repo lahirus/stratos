@@ -96,8 +96,8 @@ dialect "mvel"
 	    laPredictedValue : Double() from $delegator.getPredictedValueForNextMinute(loadAverageAverage, loadAverageGradient, loadAverageSecondDerivative, 1)
 
 
-        activeInstances : Integer() from $delegator.getActiveMembersCount($networkPartitionContext)
-	    numberOfInstancesReuquired : Double() from $delegator.getNumberOfInstancesRequired(rifPredictedValue, requestsServedPerInstance, averageRequestsServedPerInstance, arspiReset)
+        activeInstances : Integer() from $delegator.getActiveMembersCount(clusterId)
+	    numberOfInstancesReuquired : Integer() from $delegator.getNumberOfInstancesRequired(rifPredictedValue, requestsServedPerInstance, averageRequestsServedPerInstance, arspiReset)
 
         scaleUp : Boolean() from (activeInstances < numberOfInstancesReuquired )
         scaleDown : Boolean() from (activeInstances > numberOfInstancesReuquired )

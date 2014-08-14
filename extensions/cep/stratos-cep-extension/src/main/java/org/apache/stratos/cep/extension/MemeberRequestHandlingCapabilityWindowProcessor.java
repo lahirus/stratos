@@ -28,7 +28,8 @@ public class MemeberRequestHandlingCapabilityWindowProcessor extends FunctionExe
                 value[i]= Double.parseDouble(String.valueOf(aObj));
                 i++;
             }
-        }//to do avoid deviding zero
+        }//to do avoid deviding zero number of active instances won't be zero cz there is min
+
         return value[0]/value[1];
     }
 
