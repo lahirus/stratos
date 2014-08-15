@@ -55,6 +55,7 @@ public class RuleTasksDelegator {
             log.debug(String.format("Predicting the value, [average]: %s , [gradient]: %s , [second derivative]" +
                     ": %s , [time intervals]: %s ", average, gradient, secondDerivative, timeInterval));
         }
+        log.info("TESTING PATCHES WORK!!!!!!!!!!");
         predictedValue = average + gradient * timeInterval + 0.5 * secondDerivative * timeInterval * timeInterval;
 
         return predictedValue;
