@@ -97,7 +97,7 @@ public class LoadBalancerStatisticsCollector implements LoadBalancerStatisticsRe
         }
     }
 
-    @Override
+
     public int getActiveInstancesCount(Cluster cluster) {
         int activeInstances = 0;
         for( Member member :cluster.getMembers()){
