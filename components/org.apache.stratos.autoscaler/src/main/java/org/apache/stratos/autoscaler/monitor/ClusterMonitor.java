@@ -108,7 +108,9 @@ public class ClusterMonitor extends AbstractMonitor{
             boolean averageRequestServedPerInstanceReset = networkPartitionContext.isAverageRequestServedPerInstanceReset();
             if(rifReset || memoryConsumptionReset || loadAverageReset){
 
+        
                 scaleCheckKnowledgeSession.setGlobal("clusterId", clusterId);
+   
                 //scaleCheckKnowledgeSession.setGlobal("deploymentPolicy", deploymentPolicy);
                 scaleCheckKnowledgeSession.setGlobal("autoscalePolicy", autoscalePolicy);
                 scaleCheckKnowledgeSession.setGlobal("rifReset", rifReset);
