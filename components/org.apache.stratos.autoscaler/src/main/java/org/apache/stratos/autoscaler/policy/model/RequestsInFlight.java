@@ -28,6 +28,8 @@ public class RequestsInFlight implements Serializable{
 
 	private static final long serialVersionUID = 8113964958155294290L;
 	private float average;
+	private float requestsServedPerInstance;
+	private float averageRequestsServedPerInstance;
     private float secondDerivative;
     private float gradient;
     private float scaleDownMarginOfGradient;
@@ -46,6 +48,19 @@ public class RequestsInFlight implements Serializable{
     public void setAverage(float value) {
         this.average = value;
     }
+
+
+
+    public void setRequestsServedPerInstance(float value) { this.requestsServedPerInstance = value; }
+
+
+    public float getRequestsServedPerInstance() { return requestsServedPerInstance; }
+
+
+    public void setAverageRequestsServedPerInstance(float value) { this.averageRequestsServedPerInstance = value; }
+
+    public float getAverageRequestsServedPerInstance() { return averageRequestsServedPerInstance; }
+
 
     /**
      * Gets the value of the second-derivative property. 

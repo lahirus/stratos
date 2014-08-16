@@ -44,8 +44,10 @@ public class HealthStatMessageProcessorChain extends MessageProcessorChain {
     private MemberGradientOfMemoryConsumptionMessageProcessor memberGradientOfMemoryConsumptionMessageProcessor;
     private MemberSecondDerivativeOfLoadAverageMessageProcessor memberSecondDerivativeOfLoadAverageMessageProcessor;
     private MemberSecondDerivativeOfMemoryConsumptionMessageProcessor memberSecondDerivativeOfMemoryConsumptionMessageProcessor;
+    private AverageRequestsServingCapabilityMessageProcessor averageRequestsServingCapabilityMessageProcessor;
 
     private MemberFaultMessageProcessor memberFaultMessageProcessor;
+
 
     protected void initialize() {
 
@@ -65,6 +67,8 @@ public class HealthStatMessageProcessorChain extends MessageProcessorChain {
         add(memberSecondDerivativeOfMemoryConsumptionMessageProcessor);
 
         averageRequestsInFlightMessageProcessor = new AverageRequestsInFlightMessageProcessor();
+        add(averageRequestsInFlightMessageProcessor);
+        averageRequestsServingCapabilityMessageProcessor = new AverageRequestsServingCapabilityMessageProcessor();
         add(averageRequestsInFlightMessageProcessor);
         gradientOfRequestsInFlightMessageProcessor = new GradientOfRequestsInFlightMessageProcessor();
         add(gradientOfRequestsInFlightMessageProcessor);
@@ -97,6 +101,8 @@ public class HealthStatMessageProcessorChain extends MessageProcessorChain {
             averageMemoryConsumptionMessageProcessor.addEventListener(eventListener);
         } else if (eventListener instanceof AverageRequestsInFlightEventListener) {
             averageRequestsInFlightMessageProcessor.addEventListener(eventListener);
+        } else if (eventListener instanceof AverageRequestsServingCapabilityEventListener) {
+            averageRequestsServingCapabilityMessageProcessor.addEventListener(eventListener);
         } else if (eventListener instanceof GradientOfLoadAverageEventListener) {
             gradientOfLoadAverageMessageProcessor.addEventListener(eventListener);
         } else if (eventListener instanceof GradientOfMemoryConsumptionEventListener) {

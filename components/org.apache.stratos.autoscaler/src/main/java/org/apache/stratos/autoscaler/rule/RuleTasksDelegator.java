@@ -33,6 +33,10 @@ import org.apache.stratos.autoscaler.client.cloud.controller.CloudControllerClie
 import org.apache.stratos.autoscaler.client.cloud.controller.InstanceNotificationClient;
 import org.apache.stratos.autoscaler.partition.PartitionManager;
 import org.apache.stratos.cloud.controller.stub.pojo.MemberContext;
+import org.apache.stratos.messaging.domain.topology.Cluster;
+import org.apache.stratos.messaging.domain.topology.Member;
+import org.apache.stratos.messaging.domain.topology.Service;
+import org.apache.stratos.messaging.message.receiver.topology.TopologyManager;
 
 /**
  * This will have utility methods that need to be executed from rule file...
@@ -51,9 +55,42 @@ public class RuleTasksDelegator {
             log.debug(String.format("Predicting the value, [average]: %s , [gradient]: %s , [second derivative]" +
                     ": %s , [time intervals]: %s ", average, gradient, secondDerivative, timeInterval));
         }
+        log.info("TESTING PATCHES WORK!!!!!!!!!!");
         predictedValue = average + gradient * timeInterval + 0.5 * secondDerivative * timeInterval * timeInterval;
 
         return predictedValue;
+    }
+
+
+    public int getNumberOfInstancesRequired(float rifPredictedValue , float requestsServedPerInstance , float averageRequestsServedPerInstance , boolean arspiReset){
+
+        float requestsInstanceCanHandle = requestsServedPerInstance;
+
+        if(arspiReset){
+            requestsInstanceCanHandle = averageRequestsServedPerInstance;
+        }
+
+        float numberOfInstances =0;
+        if(requestsInstanceCanHandle!=0) {
+            numberOfInstances = rifPredictedValue / requestsInstanceCanHandle;
+        }else{
+            // no requests.assumed process time less than minute
+
+        }
+        return (int)Math.ceil(numberOfInstances);
+    }
+
+    public int getActiveMembersCount(String clusterId){
+
+        Service service = (Service) TopologyManager.getTopology().getServices();
+        Cluster cluster = service.getCluster(clusterId);
+        int activeInstances = 0;
+        for( Member member :cluster.getMembers()) {
+            if (member.isActive()) {
+                activeInstances++;
+            }
+        }
+        return activeInstances;
     }
 
     public AutoscaleAlgorithm getAutoscaleAlgorithm(String partitionAlgorithm){

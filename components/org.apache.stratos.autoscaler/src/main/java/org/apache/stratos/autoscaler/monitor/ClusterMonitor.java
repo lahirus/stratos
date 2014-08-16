@@ -104,6 +104,8 @@ public class ClusterMonitor extends AbstractMonitor{
             boolean rifReset = networkPartitionContext.isRifReset();
             boolean memoryConsumptionReset = networkPartitionContext.isMemoryConsumptionReset();
             boolean loadAverageReset = networkPartitionContext.isLoadAverageReset();
+            //
+            boolean averageRequestServedPerInstanceReset = networkPartitionContext.isAverageRequestServedPerInstanceReset();
             if(rifReset || memoryConsumptionReset || loadAverageReset){
 
                 scaleCheckKnowledgeSession.setGlobal("clusterId", clusterId);
@@ -112,6 +114,7 @@ public class ClusterMonitor extends AbstractMonitor{
                 scaleCheckKnowledgeSession.setGlobal("rifReset", rifReset);
                 scaleCheckKnowledgeSession.setGlobal("mcReset", memoryConsumptionReset);
                 scaleCheckKnowledgeSession.setGlobal("laReset", loadAverageReset);
+                scaleCheckKnowledgeSession.setGlobal("arspiReset", averageRequestServedPerInstanceReset);
                 scaleCheckKnowledgeSession.setGlobal("lbRef", lbReferenceType);
 
                 if (log.isDebugEnabled()) {
@@ -124,6 +127,7 @@ public class ClusterMonitor extends AbstractMonitor{
                 networkPartitionContext.setRifReset(false);
                 networkPartitionContext.setMemoryConsumptionReset(false);
                 networkPartitionContext.setLoadAverageReset(false);
+            //    networkPartitionContext.setAverageRequestServedPerInstanceReset(false);
             } else if(log.isDebugEnabled()){
                     log.debug(String.format("Scale rule will not run since the LB statistics have not received before this " +
                             "cycle for network partition %s", networkPartitionContext.getId()) );
