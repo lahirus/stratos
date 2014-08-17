@@ -28,6 +28,8 @@ import org.apache.stratos.messaging.domain.topology.Cluster;
 import org.apache.stratos.messaging.domain.topology.Service;
 import org.apache.stratos.messaging.message.receiver.topology.TopologyManager;
 
+import java.util.Random;
+
 /**
  * Load balancer statistics notifier thread for publishing statistics periodically to CEP.
  */
@@ -80,10 +82,19 @@ public class LoadBalancerStatisticsNotifier implements Runnable {
                             for (Cluster cluster : service.getClusters()) {
                                 if (!cluster.isLbCluster()) {
                                     // Publish in-flight request count of load balancer's network partition
-                                    requestCount = statsReader.getInFlightRequestCount(cluster.getClusterId());
-                                    servedRequestCount = statsReader.getServedRequestCount(cluster.getClusterId());
+                                    //requestCount = statsReader.getInFlightRequestCount(cluster.getClusterId());
+                                    requestCount = 5;
+                                    //servedRequestCount = statsReader.getServedRequestCount(cluster.getClusterId());
+                                    int random = (int) randInt(2, 3);
+                                    if (random == 2) {
+                                        servedRequestCount = 10;
+                                    } else{
+                                        servedRequestCount = 100;
+                                    }
                                     activeInstancesCount = statsReader.getActiveInstancesCount(cluster);
                                     inFlightRequestPublisher.publish(cluster.getClusterId(), networkPartitionId,activeInstancesCount, requestCount, servedRequestCount);
+                                    log.info(String.format("In-flight request count published to cep: [cluster-id] %s [network-partition] %s [value] %d [active instances] %d [RIF] %d ",
+                                            cluster.getClusterId(), networkPartitionId, servedRequestCount , activeInstancesCount ,requestCount ));
                                     if (log.isDebugEnabled()) {
                                         log.debug(String.format("In-flight request count published to cep: [cluster-id] %s [network-partition] %s [value] %d",
                                                 cluster.getClusterId(), networkPartitionId, requestCount));
@@ -109,12 +120,25 @@ public class LoadBalancerStatisticsNotifier implements Runnable {
         }
     }
 
-
-
     /**
      * Terminate load balancer statistics notifier thread.
      */
     public void terminate() {
         terminated = true;
     }
+
+    public static int randInt(int min, int max) {
+
+        // NOTE: Usually this should be a field rather than a method
+        // variable so that it is not re-seeded every call.
+        Random rand = new Random();
+
+        // nextInt is normally exclusive of the top value,
+        // so add 1 to make it inclusive
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+
+        return randomNum;
+    }
+
 }
+

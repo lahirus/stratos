@@ -19,6 +19,9 @@
 
 package org.apache.stratos.autoscaler.policy;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,9 +33,6 @@ import org.apache.stratos.autoscaler.partition.PartitionManager;
 import org.apache.stratos.autoscaler.policy.model.AutoscalePolicy;
 import org.apache.stratos.autoscaler.registry.RegistryManager;
 import org.apache.stratos.cloud.controller.stub.deployment.partition.Partition;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Manager class for the purpose of managing Autoscale/Deployment policy definitions.
@@ -70,8 +70,6 @@ public class PolicyManager {
         RegistryManager.getInstance().persistAutoscalerPolicy(policy);
         if (log.isInfoEnabled()) {
             log.info(String.format("AutoScaling policy is deployed successfully: [id] %s", policy.getId()));
-            log.info("PATCH TESTING AUATO SCALING PILICY POLICY POLICY");
-
         }
         return true;
     }

@@ -48,7 +48,6 @@ public class HealthStatMessageProcessorChain extends MessageProcessorChain {
 
     private MemberFaultMessageProcessor memberFaultMessageProcessor;
 
-
     protected void initialize() {
 
         //Most frequent first order is defined in default
@@ -69,7 +68,7 @@ public class HealthStatMessageProcessorChain extends MessageProcessorChain {
         averageRequestsInFlightMessageProcessor = new AverageRequestsInFlightMessageProcessor();
         add(averageRequestsInFlightMessageProcessor);
         averageRequestsServingCapabilityMessageProcessor = new AverageRequestsServingCapabilityMessageProcessor();
-        add(averageRequestsInFlightMessageProcessor);
+        add(averageRequestsServingCapabilityMessageProcessor);
         gradientOfRequestsInFlightMessageProcessor = new GradientOfRequestsInFlightMessageProcessor();
         add(gradientOfRequestsInFlightMessageProcessor);
         secondDerivativeOfRequestsInFlightMessageProcessor = new SecondDerivativeOfRequestsInFlightMessageProcessor();

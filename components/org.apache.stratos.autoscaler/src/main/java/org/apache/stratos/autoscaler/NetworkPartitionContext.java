@@ -239,10 +239,13 @@ public class NetworkPartitionContext implements Serializable{
         this.currentPartitionIndex = currentPartitionIndex;
     }
 
-    public float getAverageRequestsServedPerInstance() { return requestsInFlight.getAverageRequestsServedPerInstance();}
+    private float averageRequestsServedPerInstance;
+    private float requestsServedPerInstance;
 
-    public void setAverageRequestsServedPerInstance(float averageRequestServedPerInstanc) {
-        requestsInFlight.setAverageRequestsServedPerInstance(averageRequestServedPerInstanc);
+    public float getAverageRequestsServedPerInstance() { return averageRequestsServedPerInstance;}
+
+    public void setAverageRequestsServedPerInstance(float averageRequestServedPerInstance) {
+        this.averageRequestsServedPerInstance = averageRequestServedPerInstance;
         averageRequestServedPerInstanceReset = true;
 
             if(log.isDebugEnabled()){
@@ -253,7 +256,8 @@ public class NetworkPartitionContext implements Serializable{
     }
 
 
-    public float getRequestsServedPerInstance() { return requestsInFlight.getRequestsServedPerInstance();}
+
+    public float getRequestsServedPerInstance() { return requestsServedPerInstance;}
 
     public float getAverageRequestsInFlight() {
         return requestsInFlight.getAverage();
@@ -261,7 +265,7 @@ public class NetworkPartitionContext implements Serializable{
 
     public void setAverageRequestsInFlight(float averageRequestsInFlight, float requestsServedPerInstance) {
         requestsInFlight.setAverage(averageRequestsInFlight);
-        requestsInFlight.setRequestsServedPerInstance(requestsServedPerInstance);
+        this.requestsServedPerInstance = requestsServedPerInstance;
         averageRifReset = true;
         if(secondDerivativeRifRest && gradientRifReset){
             rifReset = true;
@@ -271,10 +275,6 @@ public class NetworkPartitionContext implements Serializable{
             }
         }
     }
-
-
-
-
 
     public float getRequestsInFlightSecondDerivative() {
         return requestsInFlight.getSecondDerivative();

@@ -27,19 +27,19 @@ import java.io.Serializable;
 public class LoadThresholds implements Serializable{
 
 	private static final long serialVersionUID = -8148571245537655867L;
-	private RequestsInFlightThresholds requestsInFlight;
-	private MemoryConsumptionThresholds memoryConsumption;
-	private LoadAverageThresholds loadAverage;
+	private RequestsInFlight requestsInFlight;
+	private MemoryConsumption memoryConsumption;
+	private LoadAverage loadAverage;
 
     /**
      * Gets the value of the requestsInFlight property.
      * 
      * @return
      *     possible object is
-     *     {@link RequestsInFlightThresholds }
+     *     {@link RequestsInFlight }
      *     
      */
-    public RequestsInFlightThresholds getRequestsInFlight() {
+    public RequestsInFlight getRequestsInFlight() {
         return requestsInFlight;
     }
 
@@ -48,10 +48,10 @@ public class LoadThresholds implements Serializable{
      * 
      * @param value
      *     allowed object is
-     *     {@link RequestsInFlightThresholds }
+     *     {@link RequestsInFlight }
      *     
      */
-    public void setRequestsInFlight(RequestsInFlightThresholds value) {
+    public void setRequestsInFlight(RequestsInFlight value) {
         this.requestsInFlight = value;
     }
 
@@ -60,10 +60,10 @@ public class LoadThresholds implements Serializable{
      * 
      * @return
      *     possible object is
-     *     {@link MemoryConsumptionThresholds }
+     *     {@link MemoryConsumption }
      *     
      */
-    public MemoryConsumptionThresholds getMemoryConsumption() {
+    public MemoryConsumption getMemoryConsumption() {
         return memoryConsumption;
     }
 
@@ -72,10 +72,10 @@ public class LoadThresholds implements Serializable{
      * 
      * @param value
      *     allowed object is
-     *     {@link MemoryConsumptionThresholds }
+     *     {@link MemoryConsumption }
      *     
      */
-    public void setMemoryConsumption(MemoryConsumptionThresholds value) {
+    public void setMemoryConsumption(MemoryConsumption value) {
         this.memoryConsumption = value;
     }
 
@@ -84,10 +84,10 @@ public class LoadThresholds implements Serializable{
      * 
      * @return
      *     possible object is
-     *     {@link LoadAverageThresholds }
+     *     {@link LoadAverage }
      *     
      */
-    public LoadAverageThresholds getLoadAverage() {
+    public LoadAverage getLoadAverage() {
         return loadAverage;
     }
 
@@ -96,10 +96,10 @@ public class LoadThresholds implements Serializable{
      * 
      * @param value
      *     allowed object is
-     *     {@link LoadAverageThresholds }
+     *     {@link LoadAverage }
      *     
      */
-    public void setLoadAverage(LoadAverageThresholds value) {
+    public void setLoadAverage(LoadAverage value) {
         this.loadAverage = value;
     }
 

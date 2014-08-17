@@ -54,6 +54,8 @@ global java.lang.Boolean rifReset;
 global java.lang.Boolean mcReset;
 global java.lang.Boolean laReset;
 
+global java.lang.Boolean arspiReset;
+
 rule "Scaling Rule"
 dialect "mvel"
 	when

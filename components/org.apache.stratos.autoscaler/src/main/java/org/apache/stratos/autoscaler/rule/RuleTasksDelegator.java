@@ -35,6 +35,7 @@ import org.apache.stratos.autoscaler.partition.PartitionManager;
 import org.apache.stratos.cloud.controller.stub.pojo.MemberContext;
 import org.apache.stratos.messaging.domain.topology.Cluster;
 import org.apache.stratos.messaging.domain.topology.Member;
+import org.apache.stratos.messaging.domain.topology.MemberStatus;
 import org.apache.stratos.messaging.domain.topology.Service;
 import org.apache.stratos.messaging.message.receiver.topology.TopologyManager;
 
@@ -55,7 +56,6 @@ public class RuleTasksDelegator {
             log.debug(String.format("Predicting the value, [average]: %s , [gradient]: %s , [second derivative]" +
                     ": %s , [time intervals]: %s ", average, gradient, secondDerivative, timeInterval));
         }
-        log.info("TESTING PATCHES WORK!!!!!!!!!!");
         predictedValue = average + gradient * timeInterval + 0.5 * secondDerivative * timeInterval * timeInterval;
 
         return predictedValue;
@@ -65,7 +65,7 @@ public class RuleTasksDelegator {
     public int getNumberOfInstancesRequired(float rifPredictedValue , float requestsServedPerInstance , float averageRequestsServedPerInstance , boolean arspiReset){
 
         float requestsInstanceCanHandle = requestsServedPerInstance;
-
+        log.info("Caluclating getNumberOfInstancesRequired ");
         if(arspiReset){
             requestsInstanceCanHandle = averageRequestsServedPerInstance;
         }
@@ -77,19 +77,25 @@ public class RuleTasksDelegator {
             // no requests.assumed process time less than minute
 
         }
+
         return (int)Math.ceil(numberOfInstances);
     }
 
     public int getActiveMembersCount(String clusterId){
 
-        Service service = (Service) TopologyManager.getTopology().getServices();
-        Cluster cluster = service.getCluster(clusterId);
         int activeInstances = 0;
-        for( Member member :cluster.getMembers()) {
-            if (member.isActive()) {
-                activeInstances++;
-            }
-        }
+       for( Service service : TopologyManager.getTopology().getServices()) {
+           if(service.clusterExists(clusterId)) {
+               Cluster cluster = service.getCluster(clusterId);
+
+               for (Member member : cluster.getMembers()) {
+                   if (member.isActive() || member.getStatus() == MemberStatus.Created || member.getStatus() == MemberStatus.Starting  ) {
+                       activeInstances++;
+                   }
+               }
+           }
+       }
+        log.info("member.isActive() || member.getStatus() == MemberStatus.Created || member.getStatus() == MemberStatus.Starting == "+activeInstances);
         return activeInstances;
     }
 

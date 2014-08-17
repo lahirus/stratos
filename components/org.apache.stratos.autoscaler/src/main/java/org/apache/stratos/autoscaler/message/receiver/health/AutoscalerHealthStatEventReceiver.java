@@ -198,6 +198,12 @@ public class AutoscalerHealthStatEventReceiver implements Runnable {
                 if(null != monitor){
                     NetworkPartitionContext networkPartitionContext = monitor.getNetworkPartitionCtxt(networkPartitionId);
                     if(null != networkPartitionContext){
+                        log.info("Network partition Asiri Liyana Arachchi :" +
+                                " [requestsServedPerInstance] ========= "+requestsServedPerInstance);
+                        log.info("Network partition Asiri Liyana Arachchi :" +
+                                " [network activeInstances] ========= "+activeInstances);
+                        log.info("Network partition Asiri Liyana Arachchi :" +
+                                " [RIF auto event receiver] ========= "+floatValue);
                         networkPartitionContext.setAverageRequestsInFlight(floatValue, requestsServedPerInstance);
 
                     } else {
@@ -214,12 +220,14 @@ public class AutoscalerHealthStatEventReceiver implements Runnable {
             @Override
             protected void onEvent(org.apache.stratos.messaging.event.Event event) {
 
-                AverageRequestsInFlightEvent e = (AverageRequestsInFlightEvent) event;
+                AverageRuestsServingCapabilityEvent e = (AverageRuestsServingCapabilityEvent) event;
                 String clusterId = e.getClusterId();
                 String networkPartitionId = e.getNetworkPartitionId();
                 Float floatValue = e.getValue();
 
 
+                log.info("[AverageRequestsServingCapabilityEventListener]" +
+                        "  ========= "+floatValue);
 
                 if (log.isDebugEnabled()) {
                     log.debug(String.format("Average Requests Served per Instance event: [cluster] %s [network-partition] %s [value] %s",

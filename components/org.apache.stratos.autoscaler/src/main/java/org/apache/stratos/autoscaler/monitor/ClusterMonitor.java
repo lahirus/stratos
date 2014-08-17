@@ -104,8 +104,9 @@ public class ClusterMonitor extends AbstractMonitor{
             boolean rifReset = networkPartitionContext.isRifReset();
             boolean memoryConsumptionReset = networkPartitionContext.isMemoryConsumptionReset();
             boolean loadAverageReset = networkPartitionContext.isLoadAverageReset();
-            //
+
             boolean averageRequestServedPerInstanceReset = networkPartitionContext.isAverageRequestServedPerInstanceReset();
+
             if(rifReset || memoryConsumptionReset || loadAverageReset){
 
         

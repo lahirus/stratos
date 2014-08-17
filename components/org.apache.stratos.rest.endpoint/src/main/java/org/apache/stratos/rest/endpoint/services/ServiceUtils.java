@@ -366,7 +366,8 @@ public class ServiceUtils {
                 autoscalePolicies = autoscalerServiceClient.getAutoScalePolicies();
 
             } catch (RemoteException e) {
-                String errorMsg = "Error while getting available autoscaling policies. Cause : " + e.getMessage();
+               // String errorMsg = "Error while getting available autoscaling policies. Cause : " + e.getMessage();
+                String errorMsg = "Error while getting available autoscaling policies. Cause : ASIRI LIYANA ARACHCHI" + e.getMessage();
                 log.error(errorMsg, e);
                 throw new RestAPIException(errorMsg, e);
             }
