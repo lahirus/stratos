@@ -62,41 +62,53 @@ public class RuleTasksDelegator {
     }
 
 
-    public int getNumberOfInstancesRequired(float rifPredictedValue , float requestsServedPerInstance , float averageRequestsServedPerInstance , boolean arspiReset){
+    public int getNumberOfInstancesRequired(float rifPredictedValue , float requestsServedPerInstance , float averageRequestsServedPerInstance , boolean arspiReset ,String clusterId){
 
         float requestsInstanceCanHandle = requestsServedPerInstance;
-        log.info("Caluclating getNumberOfInstancesRequired ");
-        if(arspiReset){
+
+        if(arspiReset && averageRequestsServedPerInstance != 0){
             requestsInstanceCanHandle = averageRequestsServedPerInstance;
+            log.info("[10 Minute average is set");
+        }else{
+          log.info("1 Minute Current average is set ");
         }
 
-        float numberOfInstances =0;
+        float numberOfInstances = 0;
         if(requestsInstanceCanHandle!=0) {
             numberOfInstances = rifPredictedValue / requestsInstanceCanHandle;
         }else{
-            // no requests.assumed process time less than minute
-
+            numberOfInstances = getMemberCount(clusterId, 0);
         }
-
+        log.info("REQUIRED NUMBER OF INSTANES +++ ===  "+(int)Math.ceil(numberOfInstances));
         return (int)Math.ceil(numberOfInstances);
     }
 
-    public int getActiveMembersCount(String clusterId){
+    public int getMemberCount(String clusterId , int scalingPara ){
 
-        int activeInstances = 0;
+        int activeMemberCount = 0;
+        int memberCount = 0;
        for( Service service : TopologyManager.getTopology().getServices()) {
            if(service.clusterExists(clusterId)) {
                Cluster cluster = service.getCluster(clusterId);
 
                for (Member member : cluster.getMembers()) {
                    if (member.isActive() || member.getStatus() == MemberStatus.Created || member.getStatus() == MemberStatus.Starting  ) {
-                       activeInstances++;
+                       memberCount++;
+                       if(member.isActive()) {
+                           activeMemberCount++;
+                       }
                    }
                }
            }
        }
-        log.info("member.isActive() || member.getStatus() == MemberStatus.Created || member.getStatus() == MemberStatus.Starting == "+activeInstances);
-        return activeInstances;
+        log.info("[memberCount] == " + memberCount+ "[activeMemberCount] == "+activeMemberCount);
+        if(scalingPara == 1){
+            return memberCount;
+        }else{
+            return activeMemberCount;
+        }
+
+
     }
 
     public AutoscaleAlgorithm getAutoscaleAlgorithm(String partitionAlgorithm){

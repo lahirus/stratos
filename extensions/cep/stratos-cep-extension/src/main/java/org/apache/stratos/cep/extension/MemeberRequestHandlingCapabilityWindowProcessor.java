@@ -29,8 +29,12 @@ public class MemeberRequestHandlingCapabilityWindowProcessor extends FunctionExe
                 i++;
             }
         }//to do avoid deviding zero number of active instances won't be zero cz there is min
+        Double unit = (value[0] / value[1]);
+        if(!unit.isNaN() && !unit.isInfinite())
+            return unit;
+        else
+            return 0.0;
 
-        return value[0]/value[1];
     }
 
     @Override

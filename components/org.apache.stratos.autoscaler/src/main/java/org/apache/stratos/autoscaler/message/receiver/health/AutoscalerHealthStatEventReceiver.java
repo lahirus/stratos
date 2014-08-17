@@ -175,6 +175,9 @@ public class AutoscalerHealthStatEventReceiver implements Runnable {
                 Float servedCount = e.getServedCount();
                 Float activeInstances = e.getActiveInstances();
                 Float requestsServedPerInstance = servedCount/activeInstances;
+                if(requestsServedPerInstance.isInfinite()){
+                    requestsServedPerInstance = 0f;
+                }
 
 
 
