@@ -71,7 +71,6 @@ public class RuleTasksDelegator {
             requestsInstanceCanHandle = averageRequestsServedPerInstance;
            
         }
-        log.info("getNumberOfInstancesRequiredBasedOnRif");
         float numberOfInstances = 0;
         if(requestsInstanceCanHandle!=0) {
             numberOfInstances = rifPredictedValue / requestsInstanceCanHandle;
@@ -80,7 +79,6 @@ public class RuleTasksDelegator {
         }else{
             arspiReset = false;
         }
-        log.info("numberOfInstances     " +numberOfInstances);
         return (int)Math.ceil(numberOfInstances);
     }
 
@@ -104,10 +102,8 @@ public class RuleTasksDelegator {
         int rifBasedRequiredInstances = 0;
         int mcBasedRequiredInstances  = 0;
         int laBasedRequiredInstances  = 0;
-        log.info("getNumberOfInstancesRequiredBasedOnRif  arspiIsSet arspiIsSet arspiIsSet "+arspiIsSet);
         if(arspiIsSet){
             rifBasedRequiredInstances = numberOfInstancesReuquiredBasedOnRif;
-            log.info("getNumberOfInstancesRequiredBasedOnRif");
         }
         if(mcReset){
             rifBasedRequiredInstances = numberOfInstancesReuquiredBasedOnMemoryConsumption;
