@@ -82,6 +82,7 @@ dialect "mvel"
         mcAverageLimit : Float() from  $loadThresholds.getMemoryConsumption().getAverage()
 	    mcPredictedValue : Double() from $delegator.getPredictedValueForNextMinute(memoryConsumptionAverage, memoryConsumptionGradient, memoryConsumptionSecondDerivative, 1)
 
+ 	 
         loadAverageAverage : Float() from  $networkPartitionContext.getAverageLoadAverage()
         loadAverageGradient : Float() from  $networkPartitionContext.getLoadAverageGradient()
         loadAverageSecondDerivative : Float() from  $networkPartitionContext.getLoadAverageSecondDerivative()
@@ -92,15 +93,20 @@ dialect "mvel"
         instancesCount : Integer() from $delegator.getMemberCount(clusterId , 1)
 
         requestsServedPerInstance : Float() from  $networkPartitionContext.getRequestsServedPerInstance()
-
         averageRequestsServedPerInstance : Float() from  $networkPartitionContext.getAverageRequestsServedPerInstance()
-        numberOfInstancesReuquired : Integer() from $delegator.getNumberOfInstancesRequired(rifPredictedValue, requestsServedPerInstance, averageRequestsServedPerInstance, arspiReset ,clusterId)
 
+        numberOfInstancesReuquiredBasedOnRif : Integer() from $delegator.getNumberOfInstancesRequiredBasedOnRif(rifPredictedValue, requestsServedPerInstance, averageRequestsServedPerInstance, arspiReset ,clusterId)
+        numberOfInstancesReuquiredBasedOnMemoryConsumption : Integer() from $delegator.getNumberOfInstancesRequiredBasedOnLoadAndMemoryConsumption(300.0f , 30.0f , mcPredictedValue ,activeInstancesCount )
+        numberOfInstancesReuquiredBasedOnLoadAverage : Integer() from $delegator.getNumberOfInstancesRequiredBasedOnLoadAndMemoryConsumption(300.0f , 30.0f , laPredictedValue ,activeInstancesCount )
+
+        numberOfRequiredInstances : Integer() from $delegator.getMaxNumberOfInstancesRequired(numberOfInstancesReuquiredBasedOnRif, numberOfInstancesReuquiredBasedOnMemoryConsumption ,mcReset ,numberOfInstancesReuquiredBasedOnLoadAverage, laReset) 
         // scaleUp : Boolean() from ((rifReset && (rifPredictedValue > rifAverageLimit * 0.8)) || (mcReset && (mcPredictedValue > mcAverageLimit * 0.8)) || (laReset && (laPredictedValue > laAverageLimit * 0.8)))
         // scaleDown : Boolean() from ((rifReset && (rifPredictedValue < rifAverageLimit * 0.1)) && (mcReset && (mcPredictedValue < mcAverageLimit * 0.1)) && (laReset && (laPredictedValue < laAverageLimit * 0.1)))
 
-        scaleUp : Boolean() from (instancesCount < numberOfInstancesReuquired )
-        scaleDown : Boolean() from (activeInstancesCount > numberOfInstancesReuquired )
+
+
+        scaleUp : Boolean() from (instancesCount < numberOfRequiredInstances )
+        scaleDown : Boolean() from (activeInstancesCount > numberOfRequiredInstances )
 
         eval(log.debug("[scaling] " + " [cluster] " + clusterId + " RIF predicted value: " + rifPredictedValue))
         eval(log.debug("[scaling] " + " [cluster] " + clusterId + " RIF average limit: " + rifAverageLimit))
@@ -117,11 +123,10 @@ dialect "mvel"
 	then
         if(scaleUp){
              log.info("SCALE UP!!!!!! ");
-            int additionalInstances = numberOfInstancesReuquired - instancesCount ;
+            int additionalInstances = numberOfRequiredInstances - instancesCount ;
             $networkPartitionContext.resetScaleDownRequestsCount();
             int count=0;
-            while(k != additionalInstances){
-                log.info("ASIRI LIYANA ARACHCHI");
+            while(count != additionalInstances){
             Partition partition =  autoscaleAlgorithm.getNextScaleUpPartition($networkPartitionContext, clusterId);
             if(partition != null){
                 log.info("[scale-upOHY EHAAAA] Partition available, hence trying to spawn an instance to scale up!" );
@@ -153,7 +158,7 @@ dialect "mvel"
                     for(MemberStatsContext memberStatsContext: partitionContext.getMemberStatsContexts().values()){
 
                         LoadAverage loadAverage = memberStatsContext.getLoadAverage();
-                        log.info("[scale-down] " + " [cluster] "
+                        log.debug("[scale-down] " + " [cluster] "
                             + clusterId + " [member] " + memberStatsContext.getMemberId() + " Load average: " + loadAverage);
 
                         MemoryConsumption memoryConsumption = memberStatsContext.getMemoryConsumption();
@@ -197,7 +202,7 @@ dialect "mvel"
         }  else{
             log.debug("[scaling] No decision made to either scale up or scale down ... ");
         log.info("[All instances starting active created] == "+instancesCount + " [averageRequestsServedPerInstance] == "+ averageRequestsServedPerInstance + " [requestsServedPerInstance] ==  "+requestsServedPerInstance);
-         log.info("[rifPredictedValue] == "+rifPredictedValue + " [numberOfInstancesReuquired] == "+ numberOfInstancesReuquired );
+         log.info("[rifPredictedValue] == "+rifPredictedValue + " [numberOfInstancesReuquiredBasedOnRif] == "+ numberOfInstancesReuquiredBasedOnRif );
         }
 
 end

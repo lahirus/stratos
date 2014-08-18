@@ -83,7 +83,7 @@ public class LoadBalancerStatisticsNotifier implements Runnable {
                                 if (!cluster.isLbCluster()) {
                                     // Publish in-flight request count of load balancer's network partition
                                     //requestCount = statsReader.getInFlightRequestCount(cluster.getClusterId());
-                                    requestCount = (int) randInt(2, 100);
+                                    requestCount = (int) randInt(2, 3);
                                     //servedRequestCount = statsReader.getServedRequestCount(cluster.getClusterId());
                                     int random = (int) randInt(2, 3);
                                     if (random == 2) {

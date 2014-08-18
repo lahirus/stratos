@@ -62,7 +62,7 @@ public class RuleTasksDelegator {
     }
 
 
-    public int getNumberOfInstancesRequired(float rifPredictedValue , float requestsServedPerInstance , float averageRequestsServedPerInstance , boolean arspiReset ,String clusterId){
+    public int getNumberOfInstancesRequiredBasedOnRif(float rifPredictedValue , float requestsServedPerInstance , float averageRequestsServedPerInstance , boolean arspiReset ,String clusterId){
 
         float requestsInstanceCanHandle = requestsServedPerInstance;
 
@@ -81,6 +81,38 @@ public class RuleTasksDelegator {
         }
         log.info("REQUIRED NUMBER OF INSTANES +++ ===  "+(int)Math.ceil(numberOfInstances));
         return (int)Math.ceil(numberOfInstances);
+    }
+
+    public int getNumberOfInstancesRequiredBasedOnLoadAndMemoryConsumption(float upperLimit , float lowerLimit ,double predictedValue , int activeMemberCount ){
+
+        double numberOfInstances = 0;
+        if(predictedValue > upperLimit){
+            numberOfInstances = (activeMemberCount*predictedValue)/upperLimit;
+            log.info("predictedValue > upperLimit +++ ===  "+numberOfInstances);
+        }else if((upperLimit >= predictedValue) && (predictedValue <= lowerLimit)){
+            numberOfInstances = activeMemberCount;
+            log.info("(upperLimit >= predictedValue) && (predictedValue <= lowerLimit) +++ ===  "+numberOfInstances);
+        }else{
+            numberOfInstances = (activeMemberCount*predictedValue)/lowerLimit;
+            log.info("ELSE SCALE DOWN CALCULATING +++ ===  "+numberOfInstances);
+        }
+
+        return (int)Math.ceil(numberOfInstances);
+    }
+
+    public int getMaxNumberOfInstancesRequired(int numberOfInstancesReuquiredBasedOnRif , int numberOfInstancesReuquiredBasedOnMemoryConsumption , boolean mcReset , int numberOfInstancesReuquiredBasedOnLoadAverage , boolean laReset){
+        int  numberOfInstances = 0;
+        if(mcReset && laReset){
+            numberOfInstances = Math.max(Math.max(numberOfInstancesReuquiredBasedOnMemoryConsumption,numberOfInstancesReuquiredBasedOnLoadAverage),numberOfInstancesReuquiredBasedOnRif);
+        }else if(mcReset && !laReset){
+            numberOfInstances = Math.max(numberOfInstancesReuquiredBasedOnRif , numberOfInstancesReuquiredBasedOnMemoryConsumption);
+        }else if(!mcReset && laReset){
+            numberOfInstances = Math.max(numberOfInstancesReuquiredBasedOnRif , numberOfInstancesReuquiredBasedOnLoadAverage);
+        }else{
+            numberOfInstances = numberOfInstancesReuquiredBasedOnRif;
+        }
+        log.info("FINAL COMPARING AND WINNER "+numberOfInstances);
+        return  numberOfInstances;
     }
 
     public int getMemberCount(String clusterId , int scalingPara ){
