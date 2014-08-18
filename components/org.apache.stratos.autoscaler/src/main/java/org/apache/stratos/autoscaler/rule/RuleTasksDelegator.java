@@ -46,6 +46,7 @@ public class RuleTasksDelegator {
 
     public static final double SCALE_UP_FACTOR = 0.8;   //get from config
     public static final double SCALE_DOWN_FACTOR = 0.2;
+    private static boolean arspiIsSet = false;
 
     private static final Log log = LogFactory.getLog(RuleTasksDelegator.class);
 
@@ -62,23 +63,24 @@ public class RuleTasksDelegator {
     }
 
 
-    public int getNumberOfInstancesRequiredBasedOnRif(float rifPredictedValue , float requestsServedPerInstance , float averageRequestsServedPerInstance , boolean arspiReset ,String clusterId){
+    public int getNumberOfInstancesRequiredBasedOnRif(float rifPredictedValue , float requestsServedPerInstance , float averageRequestsServedPerInstance , boolean arspiReset){
 
         float requestsInstanceCanHandle = requestsServedPerInstance;
 
         if(arspiReset && averageRequestsServedPerInstance != 0){
             requestsInstanceCanHandle = averageRequestsServedPerInstance;
            
-        }else{
-        
         }
-
+        log.info("getNumberOfInstancesRequiredBasedOnRif");
         float numberOfInstances = 0;
         if(requestsInstanceCanHandle!=0) {
             numberOfInstances = rifPredictedValue / requestsInstanceCanHandle;
+            arspiReset = true;
+
         }else{
-            numberOfInstances = getMemberCount(clusterId, 0);
+            arspiReset = false;
         }
+        log.info("numberOfInstances     " +numberOfInstances);
         return (int)Math.ceil(numberOfInstances);
     }
 
@@ -98,15 +100,22 @@ public class RuleTasksDelegator {
 
     public int getMaxNumberOfInstancesRequired(int numberOfInstancesReuquiredBasedOnRif , int numberOfInstancesReuquiredBasedOnMemoryConsumption , boolean mcReset , int numberOfInstancesReuquiredBasedOnLoadAverage , boolean laReset){
         int  numberOfInstances = 0;
-        if(mcReset && laReset){
-            numberOfInstances = Math.max(Math.max(numberOfInstancesReuquiredBasedOnMemoryConsumption,numberOfInstancesReuquiredBasedOnLoadAverage),numberOfInstancesReuquiredBasedOnRif);
-        }else if(mcReset && !laReset){
-            numberOfInstances = Math.max(numberOfInstancesReuquiredBasedOnRif , numberOfInstancesReuquiredBasedOnMemoryConsumption);
-        }else if(!mcReset && laReset){
-            numberOfInstances = Math.max(numberOfInstancesReuquiredBasedOnRif , numberOfInstancesReuquiredBasedOnLoadAverage);
-        }else{
-            numberOfInstances = numberOfInstancesReuquiredBasedOnRif;
+
+        int rifBasedRequiredInstances = 0;
+        int mcBasedRequiredInstances  = 0;
+        int laBasedRequiredInstances  = 0;
+        log.info("getNumberOfInstancesRequiredBasedOnRif  arspiIsSet arspiIsSet arspiIsSet "+arspiIsSet);
+        if(arspiIsSet){
+            rifBasedRequiredInstances = numberOfInstancesReuquiredBasedOnRif;
+            log.info("getNumberOfInstancesRequiredBasedOnRif");
         }
+        if(mcReset){
+            rifBasedRequiredInstances = numberOfInstancesReuquiredBasedOnMemoryConsumption;
+        }
+        if(laReset){
+            rifBasedRequiredInstances = numberOfInstancesReuquiredBasedOnLoadAverage;
+        }
+        numberOfInstances = Math.max(Math.max(numberOfInstancesReuquiredBasedOnMemoryConsumption,numberOfInstancesReuquiredBasedOnLoadAverage),numberOfInstancesReuquiredBasedOnRif);
         return  numberOfInstances;
     }
 
