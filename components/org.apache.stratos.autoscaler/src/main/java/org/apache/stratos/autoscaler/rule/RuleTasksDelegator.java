@@ -68,9 +68,9 @@ public class RuleTasksDelegator {
 
         if(arspiReset && averageRequestsServedPerInstance != 0){
             requestsInstanceCanHandle = averageRequestsServedPerInstance;
-            log.info("[10 Minute average is set");
+           
         }else{
-          log.info("1 Minute Current average is set ");
+        
         }
 
         float numberOfInstances = 0;
@@ -79,7 +79,6 @@ public class RuleTasksDelegator {
         }else{
             numberOfInstances = getMemberCount(clusterId, 0);
         }
-        log.info("REQUIRED NUMBER OF INSTANES +++ ===  "+(int)Math.ceil(numberOfInstances));
         return (int)Math.ceil(numberOfInstances);
     }
 
@@ -88,13 +87,10 @@ public class RuleTasksDelegator {
         double numberOfInstances = 0;
         if(predictedValue > upperLimit){
             numberOfInstances = (activeMemberCount*predictedValue)/upperLimit;
-            log.info("predictedValue > upperLimit +++ ===  "+numberOfInstances);
         }else if((upperLimit >= predictedValue) && (predictedValue >= lowerLimit)){
             numberOfInstances = activeMemberCount;
-            log.info("(upperLimit >= predictedValue) && (predictedValue <= lowerLimit) +++ ===  "+numberOfInstances);
         }else{
             numberOfInstances = (activeMemberCount*predictedValue)/lowerLimit;
-            log.info("ELSE SCALE DOWN CALCULATING +++ ===  "+numberOfInstances);
         }
 
         return (int)Math.ceil(numberOfInstances);
@@ -111,7 +107,6 @@ public class RuleTasksDelegator {
         }else{
             numberOfInstances = numberOfInstancesReuquiredBasedOnRif;
         }
-        log.info("FINAL COMPARING AND WINNER "+numberOfInstances);
         return  numberOfInstances;
     }
 
@@ -133,7 +128,6 @@ public class RuleTasksDelegator {
                }
            }
        }
-        log.info("[memberCount] == " + memberCount+ "[activeMemberCount] == "+activeMemberCount);
         if(scalingPara == 1){
             return memberCount;
         }else{

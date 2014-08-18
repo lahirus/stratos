@@ -41,6 +41,7 @@ public class LoadBalancerStatisticsCollector implements LoadBalancerStatisticsRe
 
     private LoadBalancerStatisticsCollector() {
         clusterIdRequestCountMap = new ConcurrentHashMap<String, Integer>();
+        clusterIdServedRequestCountMap = new ConcurrentHashMap<String, Integer>();
     }
 
     public static LoadBalancerStatisticsCollector getInstance() {
@@ -78,9 +79,6 @@ public class LoadBalancerStatisticsCollector implements LoadBalancerStatisticsRe
         }
     }
 
-
-
-
     /**
      * Returns the number of requests served since the last time this function was called.
      */
@@ -88,7 +86,7 @@ public class LoadBalancerStatisticsCollector implements LoadBalancerStatisticsRe
         synchronized (LoadBalancerStatisticsCollector.class) {
             if (clusterIdServedRequestCountMap.containsKey(clusterId)) {
                 Integer servedCount = clusterIdRequestCountMap.get(clusterId);
-                if(servedCount != null) {
+                if (servedCount != null) {
                     clusterIdServedRequestCountMap.put(clusterId, 0);
                     return servedCount;
                 }
@@ -96,7 +94,6 @@ public class LoadBalancerStatisticsCollector implements LoadBalancerStatisticsRe
             return 0;
         }
     }
-
 
     public int getActiveInstancesCount(Cluster cluster) {
         int activeInstances = 0;

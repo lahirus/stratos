@@ -201,14 +201,7 @@ public class AutoscalerHealthStatEventReceiver implements Runnable {
                 if(null != monitor){
                     NetworkPartitionContext networkPartitionContext = monitor.getNetworkPartitionCtxt(networkPartitionId);
                     if(null != networkPartitionContext){
-                        log.info("Network partition Asiri Liyana Arachchi :" +
-                                " [requestsServedPerInstance] ========= "+requestsServedPerInstance);
-                        log.info("Network partition Asiri Liyana Arachchi :" +
-                                " [network activeInstances] ========= "+activeInstances);
-                        log.info("Network partition Asiri Liyana Arachchi :" +
-                                " [RIF auto event receiver] ========= "+floatValue);
                         networkPartitionContext.setAverageRequestsInFlight(floatValue, requestsServedPerInstance);
-
                     } else {
                         if(log.isDebugEnabled()) {
                            log.debug(String.format("Network partition context is not available for :" +
