@@ -41,6 +41,8 @@ public class NetworkPartitionContext implements Serializable{
     private boolean scaleDownAllowed = false;
     private int scaleDownWaitCount = 5; //TODO get from a config
     private int scaleDownRequestsCount = 0;
+    private float averageRequestsServedPerInstance;
+    private float requestsServedPerInstance;
 
 //    private String defaultLbClusterId;
 //
@@ -239,8 +241,7 @@ public class NetworkPartitionContext implements Serializable{
         this.currentPartitionIndex = currentPartitionIndex;
     }
 
-    private float averageRequestsServedPerInstance;
-    private float requestsServedPerInstance;
+
 
     public float getAverageRequestsServedPerInstance() { return averageRequestsServedPerInstance;}
 
