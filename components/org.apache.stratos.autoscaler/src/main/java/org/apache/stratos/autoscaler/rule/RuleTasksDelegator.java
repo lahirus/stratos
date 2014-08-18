@@ -89,7 +89,7 @@ public class RuleTasksDelegator {
         if(predictedValue > upperLimit){
             numberOfInstances = (activeMemberCount*predictedValue)/upperLimit;
             log.info("predictedValue > upperLimit +++ ===  "+numberOfInstances);
-        }else if((upperLimit >= predictedValue) && (predictedValue <= lowerLimit)){
+        }else if((upperLimit >= predictedValue) && (predictedValue >= lowerLimit)){
             numberOfInstances = activeMemberCount;
             log.info("(upperLimit >= predictedValue) && (predictedValue <= lowerLimit) +++ ===  "+numberOfInstances);
         }else{
